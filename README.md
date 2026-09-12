@@ -2,13 +2,15 @@
 
 Machine-checked proof (Lean 4 + Mathlib) of the results in
 
-> Peter Lowes, *A fixed-part bipartite extremal bound for the eight-vertex spider*
-> (draft of 3 August 2026, circulated for independent review).
+> Peter Lowes, *A Fixed-Part Bipartite Extremal Bound for the Eight-Vertex Spider*,
+> Zenodo, version 1.0 (3 August 2026), doi:[10.5281/zenodo.21783225](https://doi.org/10.5281/zenodo.21783225).
 
 Let `T = S(3,3,1)` be the tree obtained from the seven-vertex path `P₇` by attaching one leaf to
 its central vertex. The paper proves that every bipartite graph `G` with `e(G) > 2·v(G)` contains
 `T`, hence `ex_bip(m, n; T) ≤ 2(m + n)` for all part sizes `m, n`, which is the case of the
-Waite–Aydin fixed-part conjecture for the smallest tree outside the scope of their Theorem 1.4.
+Waite–Aydin fixed-part conjecture (arXiv:2607.29579, Conjecture 1.3) for the smallest tree outside
+the scope of their Theorem 1.4; Section 7 shows that `S(3,3,1)` is the *only* tree on at most nine
+vertices outside that scope.
 
 Every statement below is proved without `sorry`, without `native_decide`, and depends only on
 Lean's three standard axioms (`propext`, `Classical.choice`, `Quot.sound`); see
@@ -31,6 +33,12 @@ Lean's three standard axioms (`propext`, `Classical.choice`, `Quot.sound`); see
 | Proposition 6.1, `ex_bip(4,4;T) = 16` | `Spider.exbip_four_four` | `Spider/Sharpness.lean` |
 | Proposition 6.1, `q·K₄,₄` attains `2N` for `N = 8q` | `Spider.exbip_eq_of_qK44` | `Spider/Sharpness.lean` |
 | Proposition 6.1, `ex_bip(m,n;T) ≥ 2(m+n) − 8` | `Spider.exbip_ge`, `Spider.exbip_within_eight` | `Spider/AdditiveGap.lean` |
+| Lemma 7.1 (leaves in `A`; `σ ≥ ⌈(a−b+1)/b⌉`) | `Spider.card_leaves_add`, `Spider.sigma_lower` | `Spider/Census.lean` |
+| Proposition 7.2 (`S(3,3,1)` is the unique tree on `≤ 9` vertices with `σ < min{a−b, b−1}`) | `Spider.census`, `Spider.spider_outside_criterion` | `Spider/Census.lean` |
+| **Corollary 1.2** (Conjectures 1.2/1.3 for all trees on `≤ 9` vertices), *conditional on Waite–Aydin* | `Spider.corollary_nine`, `Spider.corollary_nine_order` | `Spider/Census.lean` |
+
+Remark 7.3 (the computer enumeration for ten and eleven vertices) is not a theorem of the paper
+and is not formalised.
 
 ### How the statements are phrased
 
@@ -43,6 +51,14 @@ Lean's three standard axioms (`propext`, `Classical.choice`, `Quot.sound`); see
   leaf `7`); `spider ⊑ G` is Mathlib's `SimpleGraph.IsContained` (an injective homomorphism, i.e.
   a not-necessarily-induced copy) and `spider.Free G` its negation. `Spider.HasSpiderAt G v` is
   the explicit eight-distinct-vertices form of "contains a copy of `T` centred at `v`".
+* In Section 7 a tree is a Mathlib `SimpleGraph.IsTree`; its bipartition is a proper 2-colouring
+  `c`, the class `B` is `Spider.cls c b`, `A` is `Spider.cls c (!b)`, `S_T(x)` is
+  `Spider.pendantSet T x` and `σ(T_{a,b})` is `Spider.sigma T c b`. Proposition 7.2 concludes with
+  a graph isomorphism `T ≃g spider`.
+* Corollary 1.2 rests on Waite–Aydin's Theorem 1.4 and Corollary 4.8, which are external results.
+  They are stated verbatim as the explicit hypotheses `Spider.WaiteAydinThm14` and
+  `Spider.WaiteAydinCor48` (with the bound `Spider.waBound`, resp. `Spider.waOrderBound2`), and
+  the corollary is proved *assuming* them. Nothing else in the development is assumed.
 
 ## Reproducing the check
 
@@ -50,7 +66,7 @@ Lean's three standard axioms (`propext`, `Classical.choice`, `Quot.sound`); see
 # install elan (Lean version manager) if needed: https://github.com/leanprover/elan
 cd lean/spider-s331
 lake exe cache get     # fetch the prebuilt Mathlib oleans (avoids a multi-hour Mathlib build)
-lake build             # compiles all four modules; no output = no errors
+lake build --wfail     # compiles all five modules, warnings promoted to errors; no output = no errors
 lake env lean Spider/Certificate.lean   # prints the axioms each headline theorem depends on
 ```
 

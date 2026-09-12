@@ -21,3 +21,10 @@ the three standard axioms of Lean's kernel: `propext`, `Classical.choice`, `Quot
 #print axioms Spider.card_edgeFinset_gapGraph
 #print axioms Spider.exbip_ge
 #print axioms Spider.exbip_within_eight
+#print axioms Spider.card_leaves_add
+#print axioms Spider.sigma_lower
+#print axioms Spider.census
+#print axioms Spider.spider_isTree
+#print axioms Spider.spider_outside_criterion
+#print axioms Spider.corollary_nine
+#print axioms Spider.corollary_nine_order

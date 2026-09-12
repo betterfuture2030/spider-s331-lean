@@ -5,8 +5,8 @@ import Mathlib
 
 Formalisation of the main theorem of
 
-> Peter Lowes, *A fixed-part bipartite extremal bound for the eight-vertex spider*
-> (draft, 3 August 2026).
+> Peter Lowes, *A fixed-part bipartite extremal bound for the eight-vertex spider*,
+> Zenodo, version 1.0, 3 August 2026, doi:10.5281/zenodo.21783225.
 
 Let `T = S(3,3,1)` be the spider with two arms of length three and one arm of length one,
 i.e. the tree obtained from the seven-vertex path `P₇` by attaching a leaf to its central vertex.
@@ -22,10 +22,8 @@ The Lean development follows the paper's three steps:
   vertex of the smaller colour class has at least five neighbours inside the subset.
 * `Spider.hasSpiderAt_of_three_five` — the rooted embedding lemma (Lemma 4.1).
 
-The main theorem is `Spider.main`; its Mathlib-flavoured restatements `Spider.spider_isContained`,
-`Spider.edge_bound`, `Spider.edge_bound_of_colorable` and the fixed-part form `Spider.exbip_le`
-live in `Spider/Extremal.lean`; the sharpness results of Section 6 in `Spider/Sharpness.lean` and
-`Spider/AdditiveGap.lean`.
+The main results are `Spider.main`, `Spider.spider_isContained`, `Spider.edge_bound`,
+`Spider.edge_bound_of_colorable` and the fixed-part form `Spider.exbip_le`.
 -/
 
 open Finset SimpleGraph
@@ -302,46 +300,46 @@ theorem hasSpiderAt_of_three_five (H : Finset V) (c : V → Bool)
   obtain ⟨x₁, hx₁, x₂, hx₂, hx₁₂⟩ := one_lt_card.1 (by omega : 1 < #(nbr G H v))
   have hx₁H : x₁ ∈ H := mem_of_mem_nbr hx₁
   have hx₂H : x₂ ∈ H := mem_of_mem_nbr hx₂
-  -- distinct neighbours `y₁` of `x₁` and `y₂` of `x₂`, both different from `v`
-  have hA₁ : 2 ≤ #((nbr G H x₁).erase v) := by
+  -- distinct representatives `y₁ ∈ C₁`, `y₂ ∈ C₂` of `Cᵢ = N(xᵢ) \ {v}`, each of size `≥ 2`
+  have hC₁ : 2 ≤ #((nbr G H x₁).erase v) := by
     have := pred_card_le_card_erase (s := nbr G H x₁) (a := v)
     have := hdeg x₁ hx₁H
     omega
-  have hA₂ : 2 ≤ #((nbr G H x₂).erase v) := by
+  have hC₂ : 2 ≤ #((nbr G H x₂).erase v) := by
     have := pred_card_le_card_erase (s := nbr G H x₂) (a := v)
     have := hdeg x₂ hx₂H
     omega
   obtain ⟨y₁, hy₁, y₂, hy₂, hy₁₂⟩ :=
-    exists_ne_of_two_le_card hA₁ (card_pos.1 (by omega : 0 < #((nbr G H x₂).erase v)))
+    exists_ne_of_two_le_card hC₁ (card_pos.1 (by omega : 0 < #((nbr G H x₂).erase v)))
   rw [mem_erase] at hy₁ hy₂
   obtain ⟨hy₁v, hy₁⟩ := hy₁
   obtain ⟨hy₂v, hy₂⟩ := hy₂
   have hy₁H : y₁ ∈ H := mem_of_mem_nbr hy₁
   have hy₂H : y₂ ∈ H := mem_of_mem_nbr hy₂
-  -- the arm candidate sets `A₁, A₂` (equation (4.1))
-  have hA₁ne : (nbr G H y₁ \ {x₁, x₂}).Nonempty := by
+  -- the arm candidate sets `Zᵢ = N(yᵢ) \ {x₁, x₂}` (equation (4.1)), both nonempty
+  have hZ₁ne : (nbr G H y₁ \ {x₁, x₂}).Nonempty := by
     apply card_pos.1
     have := le_card_sdiff {x₁, x₂} (nbr G H y₁)
     have := hdeg y₁ hy₁H
     have : #({x₁, x₂} : Finset V) ≤ 2 := card_le_two
     omega
-  have hA₂ne : (nbr G H y₂ \ {x₁, x₂}).Nonempty := by
+  have hZ₂ne : (nbr G H y₂ \ {x₁, x₂}).Nonempty := by
     apply card_pos.1
     have := le_card_sdiff {x₁, x₂} (nbr G H y₂)
     have := hdeg y₂ hy₂H
     have : #({x₁, x₂} : Finset V) ≤ 2 := card_le_two
     omega
   by_cases hcase : 2 ≤ #((nbr G H y₁ \ {x₁, x₂}) ∪ (nbr G H y₂ \ {x₁, x₂}))
-  · -- generic case: distinct representatives `z₁ ∈ A₁`, `z₂ ∈ A₂`
-    obtain ⟨z₁, hz₁, z₂, hz₂, hz₁₂⟩ := exists_ne_of_two_le_card_union hA₁ne hA₂ne hcase
+  · -- generic case `|Z₁ ∪ Z₂| ≥ 2`: distinct representatives `z₁ ∈ Z₁`, `z₂ ∈ Z₂`
+    obtain ⟨z₁, hz₁, z₂, hz₂, hz₁₂⟩ := exists_ne_of_two_le_card_union hZ₁ne hZ₂ne hcase
     rw [mem_sdiff] at hz₁ hz₂
     exact hasSpiderAt_of_path H c hc hv hx₁ hx₂ hx₁₂ hy₁ hy₂ hy₁v hy₂v hy₁₂
       hz₁.1 hz₂.1 hz₁.2 hz₂.2 hz₁₂
-  · -- the obstruction: `A₁ = A₂ = {w}` (equation (4.2))
+  · -- the obstruction `Z₁ = Z₂ = {w}` (equation (4.2))
     push Not at hcase
     have hone := card_le_one.1 (Nat.lt_succ_iff.1 hcase)
-    obtain ⟨w, hw⟩ := hA₁ne
-    obtain ⟨w', hw'⟩ := hA₂ne
+    obtain ⟨w, hw⟩ := hZ₁ne
+    obtain ⟨w', hw'⟩ := hZ₂ne
     have hww' : w = w' := hone w (mem_union_left _ hw) w' (mem_union_right _ hw')
     subst hww'
     have hwN₁ : w ∈ nbr G H y₁ := (mem_sdiff.1 hw).1

@@ -1,10 +1,21 @@
 # Verification certificate
 
-Formal verification of *A fixed-part bipartite extremal bound for the eight-vertex spider*
-(P. Lowes, draft of 3 August 2026) in Lean 4 with Mathlib.
+Formal verification of
 
-Generated on 2026-09-11 23:33 UTC from a clean checkout of this directory
-(`lake exe cache get && lake build --wfail`).
+> P. Lowes, *A Fixed-Part Bipartite Extremal Bound for the Eight-Vertex Spider*,
+> Zenodo, version 1.0 (3 August 2026), doi:10.5281/zenodo.21783225
+
+in Lean 4 with Mathlib. Generated on 2026-09-12 00:20 UTC from a clean checkout of this
+directory (`lake exe cache get && lake build --wfail`).
+
+## Scope
+
+Formalised in full: Theorem 1.1 (all four phrasings), Lemma 3.1, equations (3.1)–(3.2), Lemma 4.1,
+Remark 4.2, Proposition 6.1 (both parts), Lemma 7.1 and Proposition 7.2 (including the converse:
+`S(3,3,1)` is a tree with `σ = 1 < 2`). Corollary 1.2 is formalised *conditionally*: it takes the
+external Waite–Aydin results (arXiv:2607.29579, Theorem 1.4 and Corollary 4.8) as explicit
+hypotheses (`Spider.WaiteAydinThm14`, `Spider.WaiteAydinCor48`). Remark 7.3 (a computer
+enumeration) is not a theorem and is not formalised.
 
 ## Environment
 
@@ -18,16 +29,16 @@ Generated on 2026-09-11 23:33 UTC from a clean checkout of this directory
 ## Build
 
 `lake build --wfail` (warnings promoted to errors): **Build completed successfully**, 0 errors,
-0 warnings, 0 `sorry`, no `native_decide`.
+0 warnings. The sources contain no `sorry`, no `native_decide` and no `axiom` declarations:
 
 ```
-(no occurrences of sorry / native_decide in the sources)
+Spider/Certificate.lean:6:Printing the axioms used by the headline theorems. A sound, `sorry`-free development uses only
 ```
 
 ## Axioms
 
-Output of `lake env lean Spider/Certificate.lean` (each headline theorem is closed under
-exactly the three standard axioms of Lean's kernel, i.e. no `sorryAx`, no custom axioms):
+Output of `lake env lean Spider/Certificate.lean`. Every headline theorem is closed under exactly
+the three standard axioms of Lean's kernel (no `sorryAx`, no custom axioms):
 
 ```
 'Spider.main' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -44,15 +55,23 @@ exactly the three standard axioms of Lean's kernel, i.e. no `sorryAx`, no custom
 'Spider.card_edgeFinset_gapGraph' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Spider.exbip_ge' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Spider.exbip_within_eight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Spider.card_leaves_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Spider.sigma_lower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Spider.census' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Spider.spider_isTree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Spider.spider_outside_criterion' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Spider.corollary_nine' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Spider.corollary_nine_order' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## Source hashes (SHA-256)
 
 ```
-df14777bfde0fef2826522f0bd41420e337955b89ac190b248931a03bea2916b  Spider.lean
+afdb3cfe72ce40c95b30d191574ed02fa9faab10f7867c021460027ef1e832e0  Spider.lean
 beb149353058f54ba15d52815111bd92c22c35eff31c53e2d48c4d08fc4b13b9  Spider/AdditiveGap.lean
-4202ecac11667c499309e46170c050d577b79dd795692474cf270e2eccf28381  Spider/Basic.lean
-ef6e056d2fd621442fd4189b0814461e118aaa391f766c4d3a250587cff7806a  Spider/Certificate.lean
+c768e26657ccbc3a5464f165a1da75f2dd9ccf89b9e7532f914e0717f07ea620  Spider/Basic.lean
+26290b85f7ab08d1a069215ca1fe0033bf42e92e90b132f78f7c75b3224fa4ef  Spider/Census.lean
+6660cadb49278982c7f638abb3d6544c9a1f620b313e091da07d444cde3c6da8  Spider/Certificate.lean
 28c6ab9e42e06c39cee6ce89bab5ec23bd4945116610ecb32328e04f1b6f2575  Spider/Extremal.lean
 c1db825a14ad1160beac6904c7746c54f4b895f7d1b14e2e27368fcc81d4be30  Spider/Sharpness.lean
 b0d6cff6edb0887979df5bb0307d40997c1c5e19bdd42f4af5bcae2747484534  lakefile.toml
