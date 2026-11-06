@@ -64,7 +64,7 @@ and is not formalised.
 
 ```bash
 # install elan (Lean version manager) if needed: https://github.com/leanprover/elan
-cd lean/spider-s331
+git clone https://github.com/betterfuture2030/spider-s331-lean && cd spider-s331-lean
 lake exe cache get     # fetch the prebuilt Mathlib oleans (avoids a multi-hour Mathlib build)
 lake build --wfail     # compiles all five modules, warnings promoted to errors; no output = no errors
 lake env lean Spider/Certificate.lean   # prints the axioms each headline theorem depends on
@@ -72,4 +72,8 @@ lake env lean Spider/Certificate.lean   # prints the axioms each headline theore
 
 Toolchain: `leanprover/lean4:v4.33.1`; Mathlib pinned to tag `v4.33.1` in `lake-manifest.json`.
 The GitHub Actions workflow `.github/workflows/lean-spider.yml` performs the same check on every
-push touching this directory.
+push and pull request.
+
+This repository was carved out of `betterfuture2030/Chatbot-Written-Apps` (directory
+`lean/spider-s331`, last changed there in commit `88b285f`) with its history preserved; it is
+the supplementary material cited by the Zenodo record above from version 1.1 onwards.

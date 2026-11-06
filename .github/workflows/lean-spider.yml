@@ -1,0 +1,25 @@
+name: Lean proof check (spider-s331)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and check axioms
+        uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
+          build-args: "--wfail"
+
+      - name: Print axioms of the headline theorems
+        run: |
+          ~/.elan/bin/lake env lean Spider/Certificate.lean | tee axioms.txt
+          # fail if any theorem depends on anything beyond the three standard axioms
+          ! grep -v -E "\[propext, Classical.choice, Quot.sound\]$" axioms.txt | grep -q "depends on axioms"
+          ! grep -q "sorryAx" axioms.txt
